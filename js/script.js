@@ -16,11 +16,28 @@ const message = document.querySelector(".message");
 //Restart button//
 const playAgainButton = document.querySelector(".play-again");
 //********starting word for testing*********//
-const word = "magnolia";
+let word = "magnolia";
 //********* Empty Array for guessed letters  ***************/
 const guessedLetters = [];
 let remainingGuesses = 8;
 
+///Random word async function//
+//calls to the url to get random word. this was a text document, so used .text() at the end of the resonse//
+//split method used to split the text content into an array of words//
+//math.floor() is used to get the integer part of the number.
+//math.random is used to generate random number//
+//***I put words.length at the end of the randomWordIndex because I wanted to get a random number between 0 and the length of the array of words.//
+//.trim() cuts the whitespace around the beginning and end of a string (spaces, tabs, or newline characters)//
+//const word now will be a random word from the array of words//
+//placeholder() at the end of the code because you want the black dots to change with the length of the word AFTER the random word has been fetched because the placeholder uses the random word as an argument to create the letters//
+const getWord = async function () {
+    const response = await fetch("https://gist.githubusercontent.com/skillcrush-curriculum/7061f1d4d3d5bfe47efbfbcfe42bf57e/raw/5ffc447694486e7dea686f34a6c085ae371b43fe/words.txt");
+    const text = await response.text();
+    const wordArray = text.split("\n");
+    const randomWordIndex = Math.floor(Math.random() * wordArray.length);
+    word = wordArray[randomWordIndex].trim();
+    placeholder(word);
+  };
 //Update Word in Progress function//
 //The function placeholder() is creating a placeholder for the word that the player is guessing. The function takes the word as an argument and creates an array of placeholder letters. The placeholder letters are all ● characters. The function then updates the innerText of the wordInProgress element to the placeholder letters.//
 //This loop iterates through the word variable and adds the placeholder character ● to the placeholderLetters array for each letter in the word.// 
@@ -38,7 +55,7 @@ const placeholder= function (word) {
 //For example, if the function is called with an empty string as an argument, the placeholderLetters array will still be created and will have 0 elements. The wordInProgress element will then be updated to show 0 ● characters, which is correct for an empty string.//
 //If I did not add placeholder(word) at the bottom of the function, the placeholder would not be created until the for loop is executed. If the for loop is executed with an invalid argument, the placeholderLetters array will not be created and the wordInProgress element will not be updated. This would result in an error.//
 
-placeholder(word);
+getWord();
 
 //*** Button validates that the guess is a letter BEFORE passing it to the make guess funtion******/
 //e.preventDefault(), prevents the default action of the button, which is to reload the page.//
