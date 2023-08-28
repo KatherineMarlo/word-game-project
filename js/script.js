@@ -18,7 +18,7 @@ const playAgainButton = document.querySelector(".play-again");
 //********starting word for testing*********//
 let word = "magnolia";
 //********* Empty Array for guessed letters  ***************/
-const guessedLetters = [];
+let guessedLetters = [];
 let remainingGuesses = 8;
 
 ///Random word async function//
@@ -37,12 +37,14 @@ const getWord = async function () {
     const randomWordIndex = Math.floor(Math.random() * wordArray.length);
     word = wordArray[randomWordIndex].trim();
     placeholder(word);
-  };
-//Update Word in Progress function//
+};
+
+getWord();
+
+//***Update Word in Progress function***//
 //The function placeholder() is creating a placeholder for the word that the player is guessing. The function takes the word as an argument and creates an array of placeholder letters. The placeholder letters are all ● characters. The function then updates the innerText of the wordInProgress element to the placeholder letters.//
 //This loop iterates through the word variable and adds the placeholder character ● to the placeholderLetters array for each letter in the word.// 
-
-const placeholder= function (word) {
+const placeholder = function (word) {
     const placeholderLetters = [];
     for (const letter of word) {
         console.log(letter);
@@ -50,12 +52,6 @@ const placeholder= function (word) {
     }
     wordInProgress.innerText = placeholderLetters.join("");
 };
-
-//add placeholder(word) at the bottom of the function because I want to create the placeholder for the word before I do anything else with the function. This ensures that the placeholder is created and displayed correctly, even if the function is called with an invalid argument.//
-//For example, if the function is called with an empty string as an argument, the placeholderLetters array will still be created and will have 0 elements. The wordInProgress element will then be updated to show 0 ● characters, which is correct for an empty string.//
-//If I did not add placeholder(word) at the bottom of the function, the placeholder would not be created until the for loop is executed. If the for loop is executed with an invalid argument, the placeholderLetters array will not be created and the wordInProgress element will not be updated. This would result in an error.//
-
-getWord();
 
 //*** Button validates that the guess is a letter BEFORE passing it to the make guess funtion******/
 //e.preventDefault(), prevents the default action of the button, which is to reload the page.//
@@ -70,11 +66,11 @@ guessLetterButton.addEventListener("click", function (e) {
     const guess = letterInput.value;
     console.log(guess);
     const greatGuess = validateInput(guess);
-     if (greatGuess) {
+    if (greatGuess) {
         makeGuess(guess);
-     }
-    letterInput.value= "";
-}); 
+    }
+    letterInput.value = "";
+});
 ////**** Input function ******///
 //takes a string as input and validates it to make sure it is a single letter from A-Z./
 //if the string that is entered is empty then user gets message, if string entered is more than 1 value, user gets message. if string does not match var accepted letters (A-Z), user gets message//
@@ -82,7 +78,7 @@ guessLetterButton.addEventListener("click", function (e) {
 const validateInput = function (input) {
     const acceptedLetter = /[a-zA-Z]/;
     if (input.length === 0) {
-        message.innerText= "Please enter a letter.";
+        message.innerText = "Please enter a letter.";
     } else if (input.length > 1) {
         message.innerText = "Please enter only 1 letter at a time.";
     } else if (!input.match(acceptedLetter)) {
@@ -95,7 +91,7 @@ const validateInput = function (input) {
 ////******changes guesses to uppercaseJAVA IS CASE SENSITIVE. Once uppercase function checks if guess (letter) is alreeady in the array. If letter is not in the array function pushes (adds) it to the guessedLetters array ******/
 //makeGuess takes a letter as input and makes a guess of that letter. The function first converts the letter to uppercase, so that it is case-insensitive.//
 //The function then checks if the letter has already been guessed. If it has, the function displays a message to the user and does not make a guess. Otherwise, the function adds the letter to the list of guessed letters, updates the display, and calls the function answerWord to check if the word has been guessed correctly.//
-const makeGuess = function (guess){
+const makeGuess = function (guess) {
     guess = guess.toUpperCase(guess);
     if (guessedLetters.includes(guess)) {
         message.innerText = "That letter has already been entered. Please try again";
@@ -111,11 +107,11 @@ const makeGuess = function (guess){
 ///***Update Display for player guesses******//
 ///***function updates the HTML of the guessed letter element and emptys the message. Then there is a for...of loop that loops through the guessed letters array and creates a list item for the guessed letters and adds it to the "guessed letters" element */
 const displayGuess = function () {
-    guessedLettersElement.innerHTML= "";
+    guessedLettersElement.innerHTML = "";
 
     for (const letter of guessedLetters) {
         const listItem = document.createElement("li");
-        listItem.textContent= letter;
+        listItem.textContent = letter;
         guessedLettersElement.append(listItem);
     }
 };
@@ -133,7 +129,7 @@ const answerWord = function (guessedLetters) {
         } else {
             correctWord.push("●");
         }
-        
+
     }
     //console.log(correctWord);
     wordInProgress.innerText = correctWord.join("");
@@ -143,17 +139,18 @@ const answerWord = function (guessedLetters) {
 ///////Remaining guesses function//////
 ////**Remaining guesses function uses the "guess" parameter as a filter to change the winning word to uppercase (java is case sensitive). This way a player can still win whether they click A of a */
 const countGuessesRemaining = function (guess) {
-  const wordUpper = word.toUpperCase();
+    const wordUpper = word.toUpperCase();
     if (!wordUpper.includes(guess)) {
-      message.innerText = `Sorry, the word does not include that ${guess}`;
-      remainingGuesses -= 1;
+        message.innerText = `Sorry, the word does not include that ${guess}`;
+        remainingGuesses -= 1;
     } else {
         message.innerText = `Great job! ${guess} is in the word!`;
     }
     if (remainingGuesses === 0) {
         message.innerText = `Sorry, Game Over. The words was ${word}`;
+        startOver();
     } else if (remainingGuesses === 1) {
-        remainingGuessesSpan.innerText= `You have 1 guess remaining!`;
+        remainingGuessesSpan.innerText = `You have 1 guess remaining!`;
     } else {
         remainingGuessesSpan.innerText = `You have ${remainingGuesses} left`;
     }
@@ -165,6 +162,29 @@ const winningWord = function () {
     if (word.toUpperCase() === wordInProgress.innerText) {
         message.classList.add("win");
         message.innerHTML = `<p class="highlight">You guessed correct the word! Congrats!</p>`;
+        startOver();
     }
 };
 
+//////Play again function///////
+const startOver = function () {
+    guessLetterButton.classList.add("hide");
+    remainingGuessesElement.classList.add("hide");
+    guessedLettersElement.classList.add("hide");
+    playAgainButton.classList.remove("hide");
+}
+
+playAgainButton.addEventListener("click", function () {
+
+    message.classList.remove("win");
+    guessedLetters = [];
+    remainingGuesses = 8;
+    remainingGuessesSpan.innerText = `${remainingGuesses} guesses`;
+    guessedLettersElement.innerHTML = "";
+    message.innerText = "";
+    getWord();
+    guessLetterButton.classList.remove("hide");
+    playAgainButton.classList.add("hide");
+    remainingGuessesElement.classList.remove("hide");
+    guessedLettersElement.classList.remove("hide");
+});
