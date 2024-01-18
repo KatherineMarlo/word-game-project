@@ -48,7 +48,6 @@ guessLetterButton.addEventListener("click", function (e) {
     e.preventDefault();
     message.innerText = "";
     const guess = letterInput.value;
-    //console.log(guess);
     const greatGuess = validateInput(guess);
     if (greatGuess) {
         makeGuess(guess);
@@ -76,7 +75,6 @@ const makeGuess = function (guess) {
         message.innerText = "That letter has already been entered. Please try again";
     } else {
         guessedLetters.push(guess);
-        //console.log(guessedLetters);
         displayGuess();
         countGuessesRemaining(guess);
         answerWord(guessedLetters); //The function iterates through the list of guessed letters and checks if each letter is in the correct position in the word. If all of the letters are in the correct position, the function returns true, indicating that the word has been guessed correctly. Otherwise, the function returns false, indicating that the word has not been guessed correctly.//
@@ -109,7 +107,6 @@ const answerWord = function (guessedLetters) {
         }
 
     }
-    //console.log(correctWord);
     wordInProgress.innerText = correctWord.join("");
     winningWord();
 };
